@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
@@ -17,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoading = false;
   String? _error;
 
-  final String apiKey = "c2d4f6f4cf90452a0adc6d6ece2080be";
+  final String? apiKey = dotenv.env['API_KEY'];
 
   Future<void> fetchWeatherData(String cityName) async {
     setState(() {
@@ -57,83 +58,85 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Weather App",
-          style: TextStyle(color: Colors.white70),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Weather App",
+            style: TextStyle(color: Colors.white70),
+          ),
+          backgroundColor: Colors.indigo,
         ),
-        backgroundColor: Colors.indigo,
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage(
-                    "assets/premium_photo-1667143327618-bf16fc8777ba.jpeg"),
-                fit: BoxFit.fill)),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (_isLoading) CircularProgressIndicator(),
-              if (_error != null)
-                Center(
-                    child: Text(
-                  _error!,
-                  style: TextStyle(fontSize: 20),
-                )),
-              if (!_isLoading && _error == null && _cityName != null) ...[
-                Text(
-                  '$_cityName',
-                  style: TextStyle(fontSize: 25),
-                ),
-                Container(
-                  padding: EdgeInsets.all(10),
-                  decoration:BoxDecoration(
-                    color: Colors.white70.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(18)
+        body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                      "assets/premium_photo-1667143327618-bf16fc8777ba.jpeg"),
+                  fit: BoxFit.fill)),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (_isLoading) CircularProgressIndicator(),
+                if (_error != null)
+                  Center(
+                      child: Text(
+                    _error!,
+                    style: TextStyle(fontSize: 20),
+                  )),
+                if (!_isLoading && _error == null && _cityName != null) ...[
+                  Text(
+                    '$_cityName',
+                    style: TextStyle(fontSize: 25),
                   ),
-                  child: Column(
-                    children: [
-                      Text(
-                        '$_temperature k',
-                        style: TextStyle(fontSize: 50),
-                      ),
-                      Text(
-                        '${_condition?.toUpperCase()}',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      Text(
-                        '$_windSpeed m/s',
-                        style: TextStyle(fontSize: 18),
-                      )
-                    ],
-                  ),
-                )
-              ],
-              SizedBox(
-                height: 10,
-              ),
-              Column(
-                children: [
-                  TextField(
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.search_outlined,color: Colors.black87,),
-                      labelText: "Enter the City Name",
-                      labelStyle: TextStyle(color: Colors.black),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black)),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black,width: 2)),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black)),
+                  Container(
+                    padding: EdgeInsets.all(10),
+                    decoration:BoxDecoration(
+                      color: Colors.white70.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(18)
                     ),
-                    onSubmitted: fetchWeatherData,
-                  ),
+                    child: Column(
+                      children: [
+                        Text(
+                          '$_temperature k',
+                          style: TextStyle(fontSize: 50),
+                        ),
+                        Text(
+                          '${_condition?.toUpperCase()}',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        Text(
+                          '$_windSpeed m/s',
+                          style: TextStyle(fontSize: 18),
+                        )
+                      ],
+                    ),
+                  )
                 ],
-              ),
-            ],
+                SizedBox(
+                  height: 10,
+                ),
+                Column(
+                  children: [
+                    TextField(
+                      decoration: InputDecoration(
+                        icon: Icon(Icons.search_outlined,color: Colors.black87,),
+                        labelText: "Enter the City Name",
+                        labelStyle: TextStyle(color: Colors.black),
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black)),
+                        focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black,width: 2)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.black)),
+                      ),
+                      onSubmitted: fetchWeatherData,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
